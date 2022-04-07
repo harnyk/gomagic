@@ -2,6 +2,8 @@ package magic
 
 import "encoding/json"
 
+//---------------------------
+
 type Magic struct {
 	Value int64
 }
@@ -16,6 +18,10 @@ func (m *Magic) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+//---------------------------
+
+//MagicMap unmarshals itself to a structure with a Value field of type V.
+//In case of an error, the Value field is set to nil.
 type MagicMap[V any] struct {
 	Value map[string]V
 }
@@ -42,3 +48,34 @@ func (m *MagicMap[V]) UnmarshalJSON(data []byte) error {
 	m.Value = value
 	return nil
 }
+
+//---------------------------
+
+//BareMap unmarshals itself to an empty map in case of an error.
+type BareMap[V any] map[string]V
+
+func (m *BareMap[V]) UnmarshalJSON(data []byte) error {
+	var value map[string]V
+
+	err := json.Unmarshal(data, &value)
+	if err != nil {
+		// m = nil
+		return nil
+	}
+	*m = value
+	return nil
+}
+
+// //Creates a new PracticalMap[V]
+// func NewPracticalMap[V any]() *PracticalMap[V] {
+// 	return &PracticalMap[V]{}
+// }
+
+// func (m *PracticalMap[V]) Set(key string, value V) *PracticalMap[V] {
+// 	if m == nil {
+// 		m = NewPracticalMap[V]()
+// 	}
+
+// 	(*m)[key] = value
+// 	return m
+// }

@@ -144,3 +144,42 @@ func TestMagicBoolMap_UnmarshalJSON_2(t *testing.T) {
 		})
 	}
 }
+
+//Tests UnmarhsalJSON for PracticalMap[bool]
+func TestPracticalMap_UnmarshalJSON(t *testing.T) {
+	type args struct {
+		data []byte
+	}
+	tests := []struct {
+		name     string
+		expected *BareMap[bool]
+		args     args
+		wantErr  bool
+	}{
+		{
+			name:     "UnmarshalJSON: correct type",
+			expected: &BareMap[bool]{"a": true},
+			args: args{
+				data: []byte(`{"a":true}`),
+			},
+		},
+		{
+			name:     "UnmarshalJSON: wrong type",
+			expected: &BareMap[bool]{},
+			args: args{
+				data: []byte(`[]`),
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			m := &BareMap[bool]{}
+			if err := json.Unmarshal(tt.args.data, m); (err != nil) != tt.wantErr {
+				t.Errorf("PracticalMap.UnmarshalJSON() error = %v, wantErr %v", err, tt.wantErr)
+			}
+			if !reflect.DeepEqual(m, tt.expected) {
+				t.Errorf("PracticalMap.UnmarshalJSON() = %v, want %v", m, tt.expected)
+			}
+		})
+	}
+}
